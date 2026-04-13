@@ -49,10 +49,16 @@ The central finding is a confirmed **Anime Quality Paradox**:
    └── Tableau_Story.twbx                 → 5-slide narrative story
 
 📁 data/
-   └── gold_anime.csv                     → Exported gold layer dataset
+   └── gold_analysis.csv                     → Exported gold layer dataset
 
 📁 report/
    └── Anime_Engagement_Popularity_Dynamics.pdf
+
+📁 Visualization/
+   ├── EDA       
+   ├── Correlation Analysis          
+   ├── Time Series Analysis
+
 ```
 ---
 
