@@ -3,381 +3,267 @@
 <h1 align="center">🎌 Anime Engagement & Popularity Dynamics</h1>
 
 <p align="center">
-  <b>Medallion Architecture • Feature Engineering • Statistical Analysis • BI Dashboards</b><br>
-  <i>Data Engineering • EDA • Correlation Analysis • Time Series • Power BI • Tableau</i>
+  <b>Medallion Architecture • Feature Engineering • Statistical Analysis • BI Dashboards</b>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.x-blue?style=flat-square&logo=python">
-  <img src="https://img.shields.io/badge/PySpark-3.x-orange?style=flat-square&logo=apache-spark">
+  <img src="https://img.shields.io/badge/Python-Pandas%20·%20SciPy-3776AB?style=flat-square&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/PySpark-3.x-E25A1C?style=flat-square&logo=apache-spark&logoColor=white">
   <img src="https://img.shields.io/badge/Databricks-Community-red?style=flat-square&logo=databricks">
-  <img src="https://img.shields.io/badge/PowerBI-Dashboard-yellow?style=flat-square&logo=powerbi">
-  <img src="https://img.shields.io/badge/Tableau-Public-lightblue?style=flat-square&logo=tableau">
+  <img src="https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=flat-square&logo=powerbi&logoColor=black">
+  <img src="https://img.shields.io/badge/Tableau-Story-1F7FBF?style=flat-square&logo=tableau&logoColor=white">
   <img src="https://img.shields.io/badge/Dataset-MyAnimeList-green?style=flat-square">
 </p>
 
----
-
 ## ⛩️ Executive Summary
 
-This study presents an end-to-end analytical pipeline examining **3,818 anime titles** (MyAnimeList, 2010–2025) to investigate the following research question:
+Anime production doubled during the streaming boom. That raises two simple questions:
 
-> **Does increased production volume correspond to higher content quality, and does quality serve as a meaningful predictor of audience popularity?**
+> **Did making more anime lead to better anime?**<br>
+> **And do the best-rated shows actually become the most popular?**
 
-**Principal Finding — The Anime Quality Paradox**
-- Increased production volume does not correspond to improved quality
-- Higher popularity does not correspond to higher quality
-- Quality is a moderate, statistically significant predictor of popularity — **Pearson r = 0.567, p < 0.001**
-- Industry-wide quality metrics improved following 2021, with the **Modern Renaissance** era recording the highest average quality scores in the dataset
+To find out, I built an end-to-end data pipeline on **3,818 anime titles from MyAnimeList (2010–2025)**. It starts with raw data in Databricks and ends with interactive Power BI and Tableau dashboards.
 
----
+**🎯 The Short Answer: The Anime Quality Paradox**
 
-## 📂 Repository Structure
+- 📉 **More anime didn't mean better anime.** Quality hit its lowest point in 2017, the same time production peaked.
+- ⭐ **Popular doesn't always mean good.** Big franchises stay popular even when a season is weak, while many top-rated shows stay unknown.
+- 📊 **Quality helps, but it isn't everything.** Better-rated shows do get more viewers, but quality explains only part of the story.
+- 🌸 **Quality is bouncing back.** Shows from 2021–2025 are the best-rated of any period in the data.
 
-<details>
-<summary><b>Click to expand folder layout</b></summary>
-<br>
+## 🌐 About the Project
 
-```
-📁 notebooks/
-   ├── 01_data_ingestion.ipynb            → Bronze layer — raw CSV ingestion
-   ├── 02_data_cleaning.ipynb             → Silver layer — cleaning & filtering
-   ├── 03_gold_feature_engineering.ipynb  → Gold layer — feature engineering
-   ├── 04_EDA_Analysis.ipynb              → 18 research questions across EDA
-   ├── 05_Correlation_Analysis.ipynb      → Pearson & Spearman correlation
-   └── 06_Time_Series.ipynb               → YoY production & quality trends
-
-📁 dashboards/
-   ├── PowerBI_Dashboard.pbix             → 3-page interactive business dashboard
-   └── Tableau_Story.twbx                 → 5-slide narrative story
-
-📁 data/
-   └── gold_analysis.csv                  → Exported gold layer dataset
-
-📁 report/
-   └── Anime_Engagement_Popularity_Dynamics.pdf
-
-📁 Visualization/
-   ├── EDA
-   ├── Correlation Analysis
-   └── Time Series Analysis
-```
-
-</details>
-
----
-
-## 🌐 Background & Overview
-
-The global anime industry has undergone substantial transformation over the past fifteen years:
-
-- Streaming platforms such as **Crunchyroll** and **Netflix** accelerated the industry's internationalization
-- Annual production volume **doubled**, rising from approximately 140 titles in 2010 to a peak of approximately 280 titles during 2016–2017
-- By 2025, the global anime market was valued at approximately **USD 36–38 billion**, growing at a compound annual growth rate of 7–9%
-
-This expansion introduced a tension between production volume and content quality, as well as between critical quality and audience popularity. This project quantifies that tension through a full Medallion Architecture pipeline: ingestion → cleaning → feature engineering → statistical analysis → business intelligence.
+Streaming platforms like Crunchyroll and Netflix took anime worldwide, and studios responded by producing far more: from **~140 titles in 2010** to **~280 a year by 2016–2017**. This project looks at what that growth did to quality, and whether audiences reward good shows or just familiar names.
 
 | | |
 |---|---|
-| **Project Type** | End-to-end data analytics portfolio project |
-| **Domain** | Media & Entertainment Analytics |
-| **Period** | 2010 – 2025 |
+| **Project Type** | End-to-end data analytics |
+| **Domain** | Media & Entertainment |
+| **Data** | MyAnimeList: 28,858 titles, narrowed to 3,818 (2010–2025) |
 | **Platform** | Databricks Community Edition |
 
----
+## 🔧 What I Did
 
-## 📊 Dataset Overview
+The project follows the **Medallion Architecture**, a common data engineering pattern. Data moves through three layers and gets cleaner and more useful at each step.
 
-| Property | Value |
-|---|---|
-| Source | MyAnimeList (MAL) |
-| Raw dataset | 28,858 titles (full MAL catalogue) |
-| After year filter (2010–2026) | 3,818 titles |
-| Scored anime | ~3,018 (79%) |
-| Unscored anime | ~800 (21%) |
-| Score range | 2.5 – 9.3 |
-| Members range | 34 – 4,192,911 |
-| Unique genres | 21 |
-| Unique studios | 500+ |
+```mermaid
+flowchart LR
+    A["📄 Raw CSV<br/>28,858 titles"] --> B["🥉 Bronze<br/>Ingestion"]
+    B --> C["🥈 Silver<br/>Cleaning"]
+    C --> D["🥇 Gold<br/>Feature Engineering"]
+    D --> E["📊 Analysis<br/>EDA · Correlation · Time Series"]
+    E --> F["📈 Dashboards<br/>Power BI · Tableau"]
 
-### Missing Value Treatment
+    classDef raw fill:#F2EFEA,stroke:#BDB5AA,color:#3D3934
+    classDef bronze fill:#F5E6D8,stroke:#C9A483,color:#3D3934
+    classDef silver fill:#ECEFF1,stroke:#A9B3BA,color:#3D3934
+    classDef gold fill:#F6EED4,stroke:#CBB774,color:#3D3934
+    classDef analysis fill:#E4EDE5,stroke:#9AB49F,color:#3D3934
+    classDef dash fill:#E3E9F2,stroke:#98AAC4,color:#3D3934
+
+    class A raw
+    class B bronze
+    class C silver
+    class D gold
+    class E analysis
+    class F dash
+
+    linkStyle default stroke:#B5AFA8,stroke-width:1.5px
+```
+
+<p align="center">
+  <img src="Anime Engagement Analytics Architecture Diagram.png" width="650"/>
+</p>
+
+### 1️⃣ Bronze Layer: Getting the Raw Data In
+
+I loaded the full MyAnimeList dataset (**28,858 titles**) into Databricks as it was, untouched. Anime titles often contain special characters, quotes and line breaks, so the loader was set up to handle those without breaking any records.
+
+### 2️⃣ Silver Layer: Cleaning the Data
+
+Raw data is messy, so this step made it reliable:
+
+- Kept the **21 columns** needed for analysis and dropped the rest (like image links)
+- Filtered to titles from **2010 onward**, which leaves **3,818 titles**
+- Fixed data types, trimmed extra spaces and removed duplicate entries
+- Filled in missing values sensibly (see below)
 
 <details>
-<summary><b>Click to expand missing value treatment table</b></summary>
+<summary><b>📋 How missing values were handled</b></summary>
 <br>
 
-| Column | Missing % | Treatment | Reason |
-|---|---|---|---|
-| demographics | 56.87% | "Unknown" | Too high to impute reliably |
-| title_english | 30.35% | Fill with title | Logical fallback |
-| themes | 28.33% | "None" | Categorical — not numeric |
-| score | 21.25% | 0 | Unrated ≠ average score |
-| scored_by | 21.25% | 0 | Consistent with score = 0 |
-| studios | 12.83% | "Unknown" | Categorical |
-| genres | 6.01% | "None" | Categorical |
-| episodes | 4.04% | Median (12) | Standard seasonal length |
-| rating | 1.92% | "Unknown" | Categorical |
-| rank | 2.44% | 0 | Numeric placeholder |
+| Column | Missing | What I Did |
+|---|:---:|---|
+| demographics | 56.87% | Marked as "Unknown" |
+| title_english | 30.35% | Used the original Japanese title |
+| themes | 28.33% | Marked as "None" |
+| score / scored_by | 21.25% | Set to 0 |
+| studios | 12.83% | Marked as "Unknown" |
+| genres | 6.01% | Marked as "Unknown" |
+| episodes | 4.04% | Used the median (12 episodes, a typical season) |
 
-> **Design Decision:** Score was imputed with 0 rather than the mean or median, as imputing an average would artificially inflate quality metrics for unrated titles. All score-based analyses filter on `score > 0` prior to calculation.
+> 💡 **Why set missing scores to 0 instead of the average?** If I gave unrated shows an average score, they'd look better than they really are. Instead, I set them to 0 and left them out of every score calculation.
 
 </details>
 
----
+### 3️⃣ Gold Layer: Creating Smarter Metrics
 
-## 🔧 Technical Process
+Raw numbers like "members" and "score" don't tell the full story. So I created six new metrics that measure engagement, loyalty and quality more meaningfully:
 
-### 🏗️ Pipeline — Medallion Architecture
-
-```
-Raw CSV ──► 🥉 Bronze Layer ──► 🥈 Silver Layer ──► 🥇 Gold Layer ──► 📊 Analysis & BI
-            Ingestion            Cleaning &          Feature           EDA · Correlation
-                                  Filtering           Engineering       Time Series · Dashboards
-```
-
-<img src="Anime Engagement Analytics Architecture Diagram.png" width="650"/>
-
-### Feature Engineering — Gold Layer
-
-| Feature | Formula | Purpose |
+| Feature | Formula | What It Tells Us |
 |---|---|---|
-| `engagement_score` | `log(members) + log(favorites+1)` | Composite audience interest metric; log transformation normalizes right-skew |
-| `score_z` | `(score − mean) / std` | Quality normalized relative to the full dataset; computed for `score > 0` only |
-| `popularity_momentum` | `members / (scored_by+1)` | High values indicate viral/casual reach; low values indicate a dedicated fanbase |
-| `retention_proxy` | `favorites / (members+1)` | Proportion of viewers who became loyal fans |
-| `score_tier` | Score range buckets | Excellent ≥8.0 · Good ≥7.0 · Average ≥6.0 · Below Average >0 |
-| `airing_era` | Year-based labels | Digital Boom · Streaming Revolution · Global Expansion · Modern Renaissance |
+| `engagement_score` | `log(members) + log(favorites+1)` | Overall audience interest; log scale tames huge outliers |
+| `score_z` | `(score − mean) / std` | How a show's quality compares to the average (scored titles only) |
+| `popularity_momentum` | `members / (scored_by+1)` | High = casual/viral reach · Low = dedicated fanbase |
+| `retention_proxy` | `favorites / (members+1)` | Share of viewers who became loyal fans |
+| `score_tier` | Score buckets | Excellent ≥8.0 · Good ≥7.0 · Average ≥6.0 · Below Average >0 · Unscored |
+| `airing_era` | Year groups | Digital Boom (2010–12) · Streaming Revolution (2013–16) · Global Expansion (2017–20) · Modern Renaissance (2021+) |
 
-> **Assumptions & Caveats**
-> - Log transformation was applied throughout to normalize skewed distributions
-> - Genre-level analysis was restricted to genres with 50+ titles to mitigate small-sample bias
-> - Studio-level quality analysis was restricted to studios with 10+ titles for the same reason
-> - Popularity momentum is set to 0 for unscored titles
-> - Score z-score returns null for unscored titles rather than an extreme negative value
+> 💡 **What is `score_z`?** It shows how far a show is above or below the average. **0** means exactly average, a **positive** number means better than average, and a **negative** number means worse.
 
-### 📚 Analysis Notebooks
+### 4️⃣ Analysis: Finding the Answers
 
-| Notebook | Method | Output |
-|---|---|---|
-| `04_EDA_Analysis` | 18 research questions covering distributions, genres, studios, and correlations | Charts, tier breakdown, hidden gems, overhyped titles |
-| `05_Correlation_Analysis` | Pearson (score vs. log members) and Spearman (score vs. raw members) correlation; genre-level analysis for 50+ observations | r = 0.567, genre correlation table |
-| `06_Time_Series` | Year-over-year production growth, 3-year rolling average, quality trend, genre growth comparison for 2010–2017 vs. 2018–2025 | Production cycle, quality recovery curve |
+- **Exploratory analysis:** 17 questions on score patterns, yearly trends, genres, studios, hidden gems and overhyped shows
+- **Correlation analysis:** measured how strongly quality and popularity are linked, overall and for each genre. Only titles with 1,000+ ratings were used, so the results are reliable.
+- **Time series analysis:** tracked how production and quality changed year by year
 
----
+### 5️⃣ Dashboards: Making It Easy to Explore
+
+- **Power BI (3 pages):** project overview, KPI dashboard with filters, and trend analysis
+- **Tableau (5-slide story):** walks through the findings, from Growth vs. Quality to Hidden Gems
 
 ## 📈 Key Results
 
-### 🎌 Core Statistical Finding
+### 📊 Does Quality Predict Popularity?
+
+<table>
+<tr>
+<td valign="top">
 
 | Metric | Value |
-|---|---|
-| Pearson r (Score vs. Log Members) | **0.567** |
-| Spearman r (Score vs. Members) | **0.568** |
+|---|:---:|
+| Pearson r | **0.567** |
+| Spearman r | **0.568** |
 | p-value | **< 0.001** |
-| Interpretation | Moderate positive correlation — quality is an influencing factor but not the sole determinant of popularity |
+
+</td>
+<td valign="top">
+
+- **r** measures how strongly two things are linked, from 0 (no link) to 1 (perfect link).
+- **~0.57 is a moderate link.** Better shows do tend to get more viewers, but it's far from guaranteed.
+- **p < 0.001** means this pattern is almost certainly real, not a coincidence.
+
+</td>
+</tr>
+</table>
+
+> ✅ **In plain words:** quality matters, but it's only part of the story. Franchise name, genre and visibility play a big role in what becomes popular.
 
 ### 🏆 Quality at a Glance
 
+<table>
+<tr>
+<td valign="top">
+
 | Metric | Value |
-|---|---|
-| Total anime analyzed | 3,818 |
-| Excellent tier (score ≥ 8.0) | **8%** |
-| Best quality year | **2024** — avg score 7.06 |
-| Worst quality year | **2017** — avg score 6.61 |
-| Quality swing (2017 → 2024) | **+0.45 points** |
-| Top genre by score (50+ titles) | **Drama — 7.28** |
-| Top studio by score (10+ titles) | **Ufotable — 7.98** |
-| Audience drop-off | 677M members → 347M rated → 7M favorites |
+|---|:---:|
+| Rated Excellent (8.0+) | **Only 8%** |
+| Worst year | **2017**: avg 6.61 |
+| Best year | **2024**: avg 7.06 |
+| Top genre | **Drama**: avg 7.28 |
+| Top studio | **Ufotable**: avg 7.98 |
 
-### 🌸 Era Quality Analysis
+</td>
+<td valign="top">
 
-| Era | Period | Avg Score Z | Verdict |
-|---|:---:|:---:|:---:|
-| Digital Boom Era | 2010–2012 | +0.140 | ✅ Above average |
-| Streaming Revolution | 2013–2016 | −0.115 | ❌ Below average |
-| Global Expansion Era | 2017–2020 | −0.133 | ❌ Lowest-performing era |
-| **Modern Renaissance** | **2021–2025** | **+0.143** | 🏆 **Highest-performing era** |
+- Scores are out of **10**, based on MyAnimeList user ratings.
+- Only about **1 in 12** shows reaches the Excellent level.
+- Quality dropped to its lowest in **2017**, then climbed back **+0.45 points** by 2024.
+- Genres with fewer titles, like **Drama**, tend to score higher.
 
-### 🎭 Genre-Level Correlation
+</td>
+</tr>
+</table>
 
-| Genre | Pearson r | Relationship |
-|---|:---:|---|
-| Sports | 0.633 | Quality strongly predicts popularity |
-| Supernatural | 0.628 | Quality strongly predicts popularity |
-| Sci-Fi | 0.603 | Quality strongly predicts popularity |
-| Drama | 0.556 | Moderate relationship |
-| Action | 0.551 | Moderate relationship |
-| Romance | 0.441 | Weak relationship — audience preference dominates |
+### 🌸 Quality Across the Years
 
-### 🎛️ Dashboards
+<table>
+<tr>
+<td valign="top">
 
-<details>
-<summary><b>Click to expand dashboard breakdown</b></summary>
-<br>
+| Era | Score Z |
+|---|:---:|
+| Digital Boom (2010–12) | +0.140 ✅ |
+| Streaming Revolution (2013–16) | −0.115 ❌ |
+| Global Expansion (2017–20) | −0.133 ❌ |
+| **Modern Renaissance (2021–25)** | **+0.143 🏆** |
 
-**Power BI (3 Pages)**
+</td>
+<td valign="top">
 
-* **Overview:** Key findings and analytical dimensions
-* **Dashboard:** KPIs, top genres, score tiers, slicers
-* **Analysis:** Trends, eras, engagement, scatter plot
+- **Positive** = better than average · **Negative** = worse than average
+- As streaming grew and studios rushed out more shows, **quality fell**.
+- Once production slowed after 2020, **quality recovered** and reached its best level yet.
 
-**Tableau (5-Story Dashboard)**
+</td>
+</tr>
+</table>
 
-* Growth vs. Quality
-* Streaming Effect
-* Genre Quality
-* Popular ≠ Good
-* Hidden Gems vs. Broken Promises
+### 🎭 Does It Depend on the Genre?
 
-</details>
+<table>
+<tr>
+<td valign="top">
 
----
+| Genre | Link (r) |
+|---|:---:|
+| Sports | 0.633 |
+| Supernatural | 0.628 |
+| Sci-Fi | 0.603 |
+| Action | 0.551 |
+| Romance | 0.441 |
 
-## 🔍 Insights & Deep Dive
+</td>
+<td valign="top">
 
-<details>
-<summary><b>Insight 1 — Excellence Is Rare but Recovering</b></summary>
-<br>
+- A **higher r** means quality matters more for popularity in that genre.
+- In **Sports and Sci-Fi**, good shows clearly win more fans.
+- In **Romance**, fans keep watching whether a show is rated well or not.
 
-* Only **8%** of titles fall within the **Excellent (8.0+)** tier
-* The remaining titles are distributed across **Average (29.4%)**, **Good (28.3%)**, **Unscored (21%)**, and **Below Average (13.2%)**
-* The **Modern Renaissance (2021–2025)** recorded the highest average **z-score (+0.143)** among all eras
-* Average scores recovered from **6.61 in 2017** to **7.06 in 2024**
-* These findings support an association between reduced output and improved quality outcomes
+</td>
+</tr>
+</table>
 
-</details>
+## 🔍 Key Insights
 
-<details>
-<summary><b>Insight 2 — Volume Dilutes Genre Quality</b></summary>
-<br>
-
-* **Comedy:** 1,478 titles, average score of **6.85**
-* **Drama:** 411 titles, average score of **7.28**
-* Genres with higher title counts generally exhibit lower average scores
-* **Drama** and **Suspense** demonstrate stronger fan retention than **Action**
-
-</details>
-
-<details>
-<summary><b>Insight 3 — Franchise Loyalty Overrides Quality</b></summary>
-<br>
-
-* *Yakusoku no Neverland S2:* score declined from **8.70 to 5.25 (−3.45)**, while retaining **973,450 members**
-* *Tokyo Ghoul:re:* score of **6.37** with **1.26M members**
-* These cases indicate that franchise popularity can sustain audience size despite declining critical quality
-
-</details>
-
-<details>
-<summary><b>Insight 4 — Streaming First Hurt, Then Helped Quality</b></summary>
-<br>
-
-* Production peaked at approximately **280 titles during 2016–2017**
-* Average score reached its lowest recorded point of **6.61 in 2017**
-* Quality metrics improved following **2021**
-* The **Modern Renaissance (+0.143)** confirms this recovery
-
-</details>
-
-<details>
-<summary><b>Insight 5 — Best Anime Rarely Reach Mainstream</b></summary>
-<br>
-
-Hidden gems (`score_z > 1`, `scored_by ≥ 1,000`, `members ≥ 5,000`, `popularity > 5,000`):
-
-| Title | Score | Members | Score Z |
-|---|---|---|---|
-| IDOLiSH7 Third Beat! Part 2 | 8.34 | 17,101 | +1.68 |
-| Chiikawa | 8.26 | 10,352 | +1.59 |
-| Pui Pui Molcar | 8.01 | 18,750 | +1.30 |
-| Love Live! Superstar!! 3rd | 7.89 | 20,223 | +1.16 |
-
-All four titles are niche continuations with small, highly engaged fanbases, indicating that high-quality content exists throughout the catalogue but visibility depends on format, franchise recognition, and genre reach rather than score alone.
-
-</details>
-
----
+- **Excellence is rare:** only 8% of titles score 8.0+, but quality has been improving since 2017.
+- **Too many shows dilute quality:** Comedy has 1,478 titles averaging 6.85, while Drama has just 411 averaging 7.28.
+- **Fans stay loyal to franchises:** *Neverland Season 2* dropped from 8.70 to 5.25, yet still kept 973K members.
+- **Great shows can stay hidden:** *Chiikawa* (8.26) and *Pui Pui Molcar* (8.01) are rated highly but have under 20K members.
 
 ## 🏁 Recommendations
 
-<details>
-<summary><b>For Studios</b></summary>
-<br>
-
-- Prioritize quality over volume — selective production consistently outperforms high-volume output on score, retention, and brand value
-- Invest in Drama, Suspense, and Mystery genres, which exhibit the highest average scores and strongest fan loyalty
-- Safeguard sequel quality — the Neverland decline (−3.45 points) illustrates measurable franchise equity erosion
-
-</details>
-
-<details>
-<summary><b>For Streaming Platforms</b></summary>
-<br>
-
-- Volume-based content acquisition does not improve catalogue quality, as demonstrated by the 2013–2020 period
-- Surface hidden gems through recommendation systems (`score_z > 1`, `popularity rank > 5,000`) to reach an underserved, loyal audience segment
-- Prestige content investment is effective, as evidenced by the measurable quality recovery observed in the Modern Renaissance
-
-</details>
-
-<details>
-<summary><b>For Industry Analysts</b></summary>
-<br>
-
-- Track annual production volume as a leading (inverse) indicator of quality
-- Use score trajectory across sequential seasons, rather than raw member retention alone, to assess franchise health
-
-</details>
-
----
+- **For studios:** make fewer, better shows. Invest in Drama, Suspense and Mystery, and protect sequel quality.
+- **For streaming platforms:** promote hidden gems in recommendations and back quality over volume.
+- **For analysts:** watch production volume closely, because a sharp rise often comes before a drop in quality.
 
 ## ⚠️ Limitations
 
-| # | Limitation |
-|:---:|---|
-| 1 | Data is sourced exclusively from MyAnimeList, which may skew toward active online communities relative to casual global viewers |
-| 2 | Multi-valued genre entries require Python-side exploding, which is not natively supported across all BI tools |
-| 3 | Ratings reflect only users who submitted scores; passive viewers may hold differing quality assessments |
-| 4 | 2024–2025 data is partially incomplete, as recently aired titles had not accumulated sufficient ratings at the time of collection |
-| 5 | Member and favorite counts are cumulative and do not reflect the timing of engagement relative to the air date |
+- The data comes only from MyAnimeList, whose users are mostly active online fans.
+- Shows from 2024–2025 are still collecting ratings, so their numbers may change.
+- Member counts add up over time and don't show *when* people started watching.
+- 2026 is excluded from trend analysis because the year isn't complete.
 
 ---
 
-## 🚀 Tech Stack
-
-![Python](https://img.shields.io/badge/Python-Pandas%20·%20NumPy%20·%20SciPy-3776AB?style=flat-square&logo=python&logoColor=white)
-&nbsp;
-![PySpark](https://img.shields.io/badge/PySpark-Databricks%20Community-E25A1C?style=flat-square&logo=apache-spark&logoColor=white)
-&nbsp;
-![Power BI](https://img.shields.io/badge/Power%20BI-Interactive%20Dashboard-F2C811?style=flat-square&logo=powerbi&logoColor=black)
-&nbsp;
-![Tableau](https://img.shields.io/badge/Tableau-Narrative%20Story-1F7FBF?style=flat-square&logo=tableau&logoColor=white)
-&nbsp;
-![Stats](https://img.shields.io/badge/Statistics-Pearson%20·%20Spearman%20·%20Time%20Series-4CAF50?style=flat-square)
-
----
-
-## 🙌 Author
-
-**Karthick S**
-
----
-
-## 🏷️ Tags
-
-`data-analytics` `anime` `databricks` `pyspark` `medallion-architecture` `feature-engineering` `eda` `correlation-analysis` `time-series` `power-bi` `tableau` `media-analytics` `portfolio-project`
-
----
-
-**📌 Data Coverage Note**
-
-> A small number of **2026 records** are present in the source data. Since **2026 is an incomplete observation period**, its lower production and audience figures reflect **partial data coverage** and should not be compared directly with the complete **2010–2025** years.
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=140&section=footer&animation=twinkling" width="100%"/>
+<sub>DESIGNED & DEVELOPED BY</sub>
 
-<br/>
+## Karthick S
 
-<i>✨ An end-to-end analytical study of production volume, content quality, and audience engagement in the global anime industry, 2010–2025. ✨</i>
+<sub>⭐ Star this repo if you found it useful</sub>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1B3139,50:FF3621,100:FF6B35&height=140&section=footer&animation=twinkling" width="100%"/>
 
 </div>
