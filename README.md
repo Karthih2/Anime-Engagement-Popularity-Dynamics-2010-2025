@@ -258,12 +258,6 @@ Raw numbers like "members" and "score" don't tell the full story. So I created s
 
 <div align="center">
 
-<sub>DESIGNED & DEVELOPED BY</sub>
-
-## Karthick S
-
-<sub>⭐ Star this repo if you found it useful</sub>
+<h3 align = "center">⭐ Star this repo if you found it useful</h3>
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1B3139,50:FF3621,100:FF6B35&height=140&section=footer&animation=twinkling" width="100%"/>
-
-</div>
